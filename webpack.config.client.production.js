@@ -3,15 +3,15 @@ const webpack = require('webpack');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
 const config = {
+    name: 'app',
     mode: 'production',
     devtool: "source-map",
-    entry: [
-        path.join(__dirname, 'src/Main.jsx')
-    ],
+    entry: {
+        app: './src/Main.jsx'
+    },
     output: {
-        path: path.join(__dirname, '/dist'),
-        filename: 'bundle.js',
-        publicPath: '/dist/'
+        path: path.resolve(__dirname, 'dist'),
+        filename: '[name].bundle.js',
     },
     plugins: [
         new UglifyJSPlugin({
@@ -29,8 +29,15 @@ const config = {
                 use: [
                     'babel-loader'
                 ]
+            },
+            {
+                test: /\.(ttf|eot|svg|gif|jpg|png)?$/,
+                use: 'file-loader'
             }
         ]
+    },
+    resolve: {
+        extensions: [".js", ".jsx"]
     }
 };
 

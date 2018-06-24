@@ -6,6 +6,7 @@ let bitArray = code.split(' ');
 
 const CHAR_RECORD_LENGTH = 32;
 
+// Defines the offsets of the fields relative to the index in the array of hex values.
 const offsets = {
     name: 2,
     hp: 14,
@@ -22,10 +23,14 @@ const offsets = {
     magicAxes: 576
 };
 
+// A monolithic monster, but in a nutshell, it takes the data given from the form 
+// input from the user, then replaces the locations in the bit array with that data
+// in hex form. Then, it transforms the hex data into binary data and packs it 
+// into a downloadable Blob.
 const generateHackedBinary = (data) => {
     const { characters, items } = data;
     characters.map((character, idx) => {
-        if (character) {
+        if (character) { // Check to see if any input was given for a character
             let characterOffset = CHAR_RECORD_LENGTH * idx;
 
             // Name
@@ -98,6 +103,9 @@ const generateHackedBinary = (data) => {
         }
     });
 
+    // Fill in values in byte array for the items. Defaults to max-value of 99 for
+    // all items; *NOTE: Black Badge can only have 1 quantity, and is represented in the
+    // game by either 0x0 or 0x63, nothing inbetween.
     for (let item in items) {
         if (items.hasOwnProperty(item)) {
             let itemOffset = offsets[item];
@@ -106,13 +114,19 @@ const generateHackedBinary = (data) => {
         }
     }
 
+    // Join the bits into a monster hex-string.
     bitArray = bitArray.join('');
 
+    // Okay I lied, split it back into couplets and then parse each as an integer.
     bitArray = bitArray.match(/.{2}/g).map((val) => parseInt(val, 16));
 
+    // Create a binary array from the values
     var binArray = new Uint8Array(bitArray);
 
+    // Turn the binary array into a Blob (making sure to use the right MIME type)
     const blob = new Blob([binArray], { type: 'application/octet-stream' });
+
+    // Deliver the file to the user!
     FileSaver.saveAs(blob, "SAVED.GAM");
 };
 

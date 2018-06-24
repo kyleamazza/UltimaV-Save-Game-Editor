@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "development": "webpack-dev-server --open --config webpack.config.client.js"
+    "development": "webpack-dev-server --open --config webpack.config.client.js",
+    "production": "webpack --config webpack.config.client.production --mode=production"
   },
   "keywords": [],
   "author": "",
