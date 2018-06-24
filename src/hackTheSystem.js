@@ -9,10 +9,10 @@ const CHAR_RECORD_LENGTH = 32;
 // Defines the offsets of the fields relative to the index in the array of hex values.
 const offsets = {
     name: 2,
-    hp: 14,
+    hp: 18,
     str: 14,
-    int: 15,
-    dex: 16,
+    int: 16,
+    dex: 15,
     exp: 22,
     gold: 516,
     keys: 518,
@@ -40,6 +40,9 @@ const generateHackedBinary = (data) => {
                 name.map((bit, index) => {
                     bitArray[nameOffset + index] = bit;
                 });
+                for (let i = 0; i < 8 - character.name.length; i++) {
+                    bitArray[nameOffset + character.name.length + i] = "00";
+                }
             }
 
             if (character.str) {
@@ -71,8 +74,10 @@ const generateHackedBinary = (data) => {
                     hpBit = "0" + hpBit;
                 }
                 hpBit = hpBit.match(/.{1,2}/g);
+                console.log(hpBit);
                 hpBit = [...hpBit, ...hpBit]; // Handle for initial hp and Max HP
-                hpBit.map((bit, index) => {
+                console.log(hpBit);
+                hpBit.reverse().map((bit, index) => {
                     bitArray[hpOffset + index] = bit;
                 });
             }
@@ -84,7 +89,7 @@ const generateHackedBinary = (data) => {
                     expBits = "0" + expBits;
                 }
                 expBits = expBits.match(/.{1,2}/g);
-                expBits.map((bit, index) => {
+                expBits.reverse().map((bit, index) => {
                     bitArray[expOffset + index] = bit;
                 });
             }
@@ -113,6 +118,8 @@ const generateHackedBinary = (data) => {
             bitArray[itemOffset] = itemBits;
         }
     }
+
+    console.log(bitArray);
 
     // Join the bits into a monster hex-string.
     bitArray = bitArray.join('');
